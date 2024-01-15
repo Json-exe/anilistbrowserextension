@@ -9,6 +9,12 @@
     "48": "ExtensionIcon.png"
   },
 
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "{fe3a4468-71c2-4a96-b91d-1722ee55d243}"
+    }
+  },
+
   "permissions": ["storage", "menus", "notifications"],
 
   "browser_action": {
