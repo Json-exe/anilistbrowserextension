@@ -3,6 +3,8 @@ import {checkIfAuthenticated, createNotification, getUserToken, handleUnauthoriz
 import GET_USER from './graphql/GetUser.graphql';
 // @ts-ignore
 import SEARCH_MEDIA from './graphql/SearchMedia.graphql';
+// @ts-ignore
+import ADD_MEDIA_TO_LIST from './graphql/AddMediaToList.graphql';
 
 const url = "https://graphql.anilist.co";
 
@@ -34,6 +36,36 @@ async function searchForAnime(selectionText: string | undefined) {
     return data.data.Media;
 }
 
+async function addAnimeToList(id: string) {
+    const options = {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Authorization': 'Bearer ' + await getUserToken(),
+        },
+        body: JSON.stringify({
+            query: ADD_MEDIA_TO_LIST,
+            variables: {
+                mediaId: id
+            }
+        })
+    } as RequestInit;
+
+    const response = await fetch(url, options);
+
+    if (response.status === 400 || response.status === 401) {
+        await handleUnauthorized();
+        return false;
+    } else if (!response.ok) {
+        await createNotification("Error", "Could not fetch user from AniList")
+        return false;
+    }
+
+    const data = await response.json() as string;
+    return data !== null;
+}
+
 async function searchAnimeAndCheckIfOnList(selectionText: string | undefined) {
     if (!await checkIfAuthenticated()) {
         return;
@@ -43,7 +75,17 @@ async function searchAnimeAndCheckIfOnList(selectionText: string | undefined) {
     }
     const anime = await searchForAnime(selectionText);
     if (anime) {
-
+        const isOnList = anime.mediaListEntry !== null;
+        if (isOnList) {
+            await createNotification("Anime already on list", "Anime is already on your watchlist");
+            return;
+        }
+        const success = await addAnimeToList(anime.id);
+        if (success) {
+            await createNotification("Anime added", "Anime was successfully added to your watchlist")
+        } else {
+            await createNotification("Anime not added", "Could not add anime to your watchlist")
+        }
     } else {
         await createNotification("Anime not found", "Could not find anime on AniList!")
     }

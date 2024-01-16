@@ -25,7 +25,7 @@ export async function checkIfAuthenticated() {
     if (await getUserToken() === undefined) {
         await createNotification("Not logged in", "Please log in to AniList first via the extension popup!")
         return false;
-    } else {
+    } else if (await checkIfAuthCheckIsNeeded()) {
         const options = {
             method: "POST",
             headers: {
@@ -44,6 +44,28 @@ export async function checkIfAuthenticated() {
             await handleUnauthorized();
             return false;
         }
+
+        if (response.ok) {
+            const timestamp = addHours(1);
+            await browser.storage.local.set({AuthTimeStamp: timestamp})
+        }
         return response.ok;
+    } else {
+        return true;
     }
+}
+
+async function checkIfAuthCheckIsNeeded() {
+    const currentTime = Date.now();
+    const timestamp = await browser.storage.local.get("AuthTimeStamp") as
+        {AuthTimeStamp: number | undefined};
+    if (timestamp.AuthTimeStamp === undefined) {
+        return true;
+    }
+
+    return currentTime > timestamp.AuthTimeStamp;
+}
+
+function addHours(h: number) {
+    return Date.prototype.setTime(Date.prototype.getTime() + (h * 60 * 60 * 1000));
 }
