@@ -1,5 +1,5 @@
 {
-  "manifest_version": 2,
+  "manifest_version": 3,
   "name": "ListRoller",
   "version": "0.1",
 
@@ -9,20 +9,14 @@
     "48": "ExtensionIcon.png"
   },
 
-  "browser_specific_settings": {
-    "gecko": {
-      "id": "{fe3a4468-71c2-4a96-b91d-1722ee55d243}"
-    }
-  },
+  "permissions": ["storage", "contextMenus", "notifications"],
 
-  "permissions": ["storage", "menus", "notifications"],
-
-  "browser_action": {
+  "action": {
     "default_icon": "ExtensionIcon.png",
     "default_popup": "./html/popup.html"
   },
 
   "background": {
-      "scripts": ["anilistextensions.js"]
+    "service_worker": "anilistextensions.js"
   }
 }
