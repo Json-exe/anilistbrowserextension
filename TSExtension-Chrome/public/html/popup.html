@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>My Extension</title>
+    <title>AniList-Extension</title>
     <link href="../css/bootstrap.css" rel="stylesheet">
     <style>
         /* Add your CSS here */
@@ -20,7 +20,9 @@
         }
         .btn:hover {
             transform: scale(1.02);
-            transition: all 0.2s ease-in-out;
+            filter: brightness(0.9);
+            box-shadow: 0 0 7px 0 black, 1px 1px 2px 0 white inset;
+            transition: all 0.3s ease-in-out;
         }
         .btn:active {
             transform: scale(0.98);
@@ -52,7 +54,7 @@
         <h5>3. Confirm</h5>
         <a class="btn btn-secondary action-elements" id="confirm-login">Confirm</a>
     </div>
-    <a id="reauthenticate" class="btn btn-outline-primary action-elements">Reauthenticate|Log-Out</a>
+    <a id="reauthenticate" class="btn btn-outline-primary action-elements">Reauthenticate | Log-Out</a>
 </div>
 <script src="../popup.js"></script>
 </body>
