@@ -29,7 +29,7 @@ async function searchForAnime(selectionText: string | undefined) {
         await handleUnauthorized()
         return;
     } else if (!response.ok) {
-        await createNotification("Error", "Could not fetch user from AniList")
+        await createNotification("Info", "Could not find anime on AniList! Likely it does not exist!")
         return;
     }
     const data = await response.json();
