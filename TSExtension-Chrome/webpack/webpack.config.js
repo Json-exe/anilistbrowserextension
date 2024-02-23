@@ -5,6 +5,7 @@ module.exports = {
     entry: {
         anilistextensions: path.resolve(__dirname, "..", "src", "anilistextensions.ts"),
         popup: path.resolve(__dirname, "..", "src", "popup.ts"),
+        content_series: path.resolve(__dirname, "..", "src", "content-series.ts")
     },
     output: {
         path: path.join(__dirname, "../dist"),

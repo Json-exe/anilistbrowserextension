@@ -2,21 +2,25 @@
   "manifest_version": 3,
   "name": "ListRoller",
   "version": "0.1",
-
   "description": "Adds common AniList shortcuts in the right click menu of your browser. Like adding the selected title of an anime to your watch list",
-
   "icons": {
     "48": "ExtensionIcon.png"
   },
-
-  "permissions": ["storage", "contextMenus", "notifications"],
-
+  "permissions": [
+    "storage",
+    "contextMenus",
+    "notifications",
+    "scripting",
+    "webNavigation"
+  ],
   "action": {
     "default_icon": "ExtensionIcon.png",
     "default_popup": "./html/popup.html"
   },
-
   "background": {
     "service_worker": "anilistextensions.js"
-  }
+  },
+  "host_permissions": [
+    "https://www.crunchyroll.com/*"
+  ]
 }

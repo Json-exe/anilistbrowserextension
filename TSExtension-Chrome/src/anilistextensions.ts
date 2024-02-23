@@ -137,3 +137,13 @@ chrome.contextMenus.onClicked.addListener(function (info) {
             break;
     }
 })
+
+chrome.scripting.registerContentScripts([
+    {
+        id: "content_series",
+        js: ["content_series.js"],
+        persistAcrossSessions: false,
+        matches: ["https://www.crunchyroll.com/*"],
+        runAt: "document_start",
+    }
+]).then(() => console.log("Registration complete!")).catch((err) => console.warn("unexpected error on registration.", err))
