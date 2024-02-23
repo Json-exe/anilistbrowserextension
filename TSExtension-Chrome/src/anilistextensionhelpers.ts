@@ -3,11 +3,14 @@ import {getUserQuery} from "./graphql/graphqlQuerys";
 export async function handleUnauthorized() {
     await chrome.storage.local.remove("UserToken");
     await chrome.storage.local.remove("UserId");
-    await createNotification("AniList Extension", "You are not logged in. Please log in to AniList to use this extension.");
+    createNotification("AniList Extension", "You are not logged in. Please log in to AniList to use this extension.");
 }
 
-export async function createNotification(title: string, message: string) {
-    await chrome.notifications.create({
+export function createNotification(title: string, message: string) {
+    if (chrome.notifications === undefined) {
+        return;
+    }
+    chrome.notifications.create({
         type: "basic",
         iconUrl: chrome.runtime.getURL("ExtensionIcon.png"),
         title: title,
@@ -22,7 +25,7 @@ export async function getUserToken() {
 
 export async function checkIfAuthenticated() {
     if (await getUserToken() === undefined) {
-        await createNotification("Not logged in", "Please log in to AniList first via the extension popup!")
+        createNotification("Not logged in", "Please log in to AniList first via the extension popup!")
         return false;
     } else if (await checkIfAuthCheckIsNeeded()) {
         const options = {
@@ -39,7 +42,7 @@ export async function checkIfAuthenticated() {
 
         const response = await fetch("https://graphql.anilist.co", options);
         if (response.status === 401) {
-            await createNotification("Not logged in", "Please log in to AniList first via the extension popup!")
+            createNotification("Not logged in", "Please log in to AniList first via the extension popup!")
             await handleUnauthorized();
             return false;
         }

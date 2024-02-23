@@ -9,5 +9,6 @@ query ($id: Int, $search: String) { # Define which variables will be used in the
             id
             status
         }
+        siteUrl
     }
 }

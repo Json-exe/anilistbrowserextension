@@ -16,7 +16,8 @@ export const searchMedia = `query ($id: Int, $search: String) { # Define which v
         mediaListEntry {
             id
             status
-        }
+        },
+        siteUrl
     }
 }
 `

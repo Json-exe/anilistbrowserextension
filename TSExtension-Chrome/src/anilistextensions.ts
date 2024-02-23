@@ -24,7 +24,7 @@ async function searchForAnime(selectionText: string | undefined) {
         await handleUnauthorized()
         return;
     } else if (!response.ok) {
-        await createNotification("Error", "Could not fetch user from AniList")
+        createNotification("Error", "Could not fetch user from AniList")
         return;
     }
     const data = await response.json();
@@ -53,7 +53,7 @@ async function addAnimeToList(id: string) {
         await handleUnauthorized();
         return false;
     } else if (!response.ok) {
-        await createNotification("Error", "Could not fetch user from AniList")
+        createNotification("Error", "Could not fetch user from AniList")
         return false;
     }
 
@@ -74,17 +74,17 @@ async function searchAnimeAndCheckIfOnList(selectionText: string | undefined) {
     if (anime) {
         const isOnList = anime.mediaListEntry !== null;
         if (isOnList) {
-            await createNotification("Anime already on list", "Anime is already on your watchlist");
+            createNotification("Anime already on list", "Anime is already on your watchlist");
             return;
         }
         const success = await addAnimeToList(anime.id);
         if (success) {
-            await createNotification("Anime added", "Anime was successfully added to your watchlist")
+            createNotification("Anime added", "Anime was successfully added to your watchlist")
         } else {
-            await createNotification("Anime not added", "Could not add anime to your watchlist")
+            createNotification("Anime not added", "Could not add anime to your watchlist")
         }
     } else {
-        await createNotification("Anime not found", "Could not find anime on AniList!")
+        createNotification("Anime not found", "Could not find anime on AniList!")
     }
 }
 
@@ -111,7 +111,7 @@ async function getCurrentUser() {
         await handleUnauthorized();
         return false;
     } else if (!response.ok) {
-        await createNotification("Error", "Could not fetch user from AniList!");
+        createNotification("Error", "Could not fetch user from AniList!");
         return false;
     }
     const data = await response.json();
