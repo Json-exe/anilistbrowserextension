@@ -1,5 +1,6 @@
 import {checkIfAuthenticated, createNotification, getUserToken, handleUnauthorized} from "./anilistextensionhelpers";
-import {getUserQuery, searchMedia, addMediaToList} from './graphql/graphqlQuerys';
+import {addMediaToList, getUserQuery, searchMedia} from './graphql/graphqlQuerys';
+import {MessageData, RequestType, ResponseData} from "./Interfaces";
 
 const url = "https://graphql.anilist.co";
 
@@ -89,7 +90,7 @@ async function searchAnimeAndCheckIfOnList(selectionText: string | undefined) {
 }
 
 async function getCurrentUser() {
-    const userId = await chrome.storage.local.get("UserId") as {UserId: string | undefined};
+    const userId = await chrome.storage.local.get("UserId") as { UserId: string | undefined };
     if (userId.UserId !== undefined) {
         return true;
     }
@@ -147,3 +148,16 @@ chrome.scripting.registerContentScripts([
         runAt: "document_start",
     }
 ]).then(() => console.log("Registration complete!")).catch((err) => console.warn("unexpected error on registration.", err))
+
+chrome.runtime.onMessage.addListener((message: MessageData, sender, sendResponse) => {
+        console.log("Received message: ", message)
+        const response: ResponseData = {success: false};
+        if (message.Type === RequestType.Auth) {
+            checkIfAuthenticated().then(auth => {
+                response.success = auth;
+                sendResponse(response);
+            });
+        }
+        return true;
+    }
+)
