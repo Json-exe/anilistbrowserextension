@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", async () => {
     const loginDiv = document.getElementById('login-div')!;
-    const reauthButton = document.getElementById('reauthenticate')!;
+    const reauthDiv = document.getElementById('reauthenticate')!;
     const confirmLogin = document.getElementById('confirm-login')!;
     const tokenInput = document.getElementById('token-input')! as HTMLInputElement;
     const notifyContainer = document.getElementById("notify-container")!;
@@ -9,17 +9,17 @@ document.addEventListener("DOMContentLoaded", async () => {
     const token = await chrome.storage.local.get("UserToken") as { UserToken: string | undefined };
     if (token.UserToken === undefined || token.UserToken.length <= 50) {
         showElementAndChildren(loginDiv);
-        reauthButton.style.display = 'none';
+        reauthDiv.style.display = 'none';
     } else {
         hideElementAndChildren(loginDiv);
-        reauthButton.style.display = 'block';
+        reauthDiv.style.display = 'block';
     }
 
-    reauthButton.addEventListener('click', async () => {
+    reauthDiv.addEventListener('click', async () => {
         await chrome.storage.local.remove("UserToken");
         await chrome.storage.local.remove("UserId");
         showElementAndChildren(loginDiv);
-        reauthButton.style.display = 'none';
+        reauthDiv.style.display = 'none';
     });
 
     confirmLogin.addEventListener('click', async () => {
@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
         await chrome.storage.local.set({ UserToken: tokenInput.value });
         hideElementAndChildren(loginDiv);
-        reauthButton.style.display = 'block';
+        reauthDiv.style.display = 'block';
     });
 
     function showError(text: string) {
