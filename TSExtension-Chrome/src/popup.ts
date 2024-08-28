@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             showError("The token was incorrect!")
             return;
         }
-        await chrome.storage.local.set({ UserToken: tokenInput.value });
+        await chrome.storage.local.set({UserToken: tokenInput.value});
         hideElementAndChildren(loginDiv);
         mainDiv.style.display = 'block';
     });
@@ -44,6 +44,12 @@ document.addEventListener("DOMContentLoaded", async () => {
         notifyContainer.classList.add("visually-hidden")
         notifyText.textContent = ""
     }
+
+    chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+        if (message.type === "notification") {
+            showError(message.text)
+        }
+    });
 });
 
 
