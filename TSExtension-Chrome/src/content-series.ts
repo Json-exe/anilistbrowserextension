@@ -1,13 +1,20 @@
 import {searchMedia} from './graphql/graphqlQuerys'
 import {getUserToken, handleUnauthorized} from "./anilistextensionhelpers";
-import {MessageData, RequestType, ResponseData} from "./Interfaces";
+import {MessageData, RequestType, ResponseData, AnimeInfo} from "./Interfaces";
 
 const url = "https://graphql.anilist.co";
+
+const connection = chrome.runtime.connect({ name: "popup" });
 
 async function checkAuth() {
     const message: MessageData = {Type: RequestType.Auth}
     const response = await chrome.runtime.sendMessage(message) as ResponseData;
     return response.success;
+}
+
+async function sendAnimeInfoToPopup(info: AnimeInfo) {
+    const message: MessageData = {Type: RequestType.AnimeInfo, Value: info}
+    connection.postMessage(message);
 }
 
 const observerUrlChange = async () => {

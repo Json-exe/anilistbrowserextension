@@ -1,3 +1,5 @@
+import {AnimeInfo, RequestType, MessageData} from "./Interfaces";
+
 document.addEventListener("DOMContentLoaded", async () => {
     const loginDiv = document.getElementById('login-div')!;
     const mainDiv = document.getElementById('main')!;
@@ -45,10 +47,12 @@ document.addEventListener("DOMContentLoaded", async () => {
         notifyText.textContent = ""
     }
 
-    chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-        if (message.type === "notification") {
-            showError(message.text)
-        }
+    chrome.runtime.onConnect.addListener((port) => {
+        port.onMessage.addListener((message: MessageData) => {
+            if (message.Type === RequestType.AnimeInfo) {
+                console.log(message.Value);
+            }
+        });
     });
 });
 
