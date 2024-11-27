@@ -1,4 +1,5 @@
-import {getUserQuery} from "./graphql/graphqlQuerys";
+import {execute, UnauthorizedException} from "./graphql/graphqlExecutor";
+import {GET_USER_QUERY} from "./graphql/graphqlQuerys";
 
 export async function handleUnauthorized() {
     await chrome.storage.local.remove("UserToken");
@@ -28,30 +29,23 @@ export async function checkIfAuthenticated() {
         createNotification("Not logged in", "Please log in to AniList first via the extension popup!")
         return false;
     } else if (await checkIfAuthCheckIsNeeded()) {
-        const options = {
-            method: "POST",
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                'Authorization': 'Bearer ' + await getUserToken(),
-            },
-            body: JSON.stringify({
-                query: getUserQuery,
-            })
-        } as RequestInit;
-
-        const response = await fetch("https://graphql.anilist.co", options);
-        if (response.status === 401) {
-            createNotification("Not logged in", "Please log in to AniList first via the extension popup!")
-            await handleUnauthorized();
+        try {
+            const data = await execute(GET_USER_QUERY, {}, {'Authorization': 'Bearer ' + await getUserToken()});
+            if (data.Viewer.id !== undefined) {
+                const timestamp = addHours(1);
+                await chrome.storage.local.set({AuthTimeStamp: timestamp})
+            } else {
+                await handleUnauthorized();
+                return false;
+            }
+        } catch (e) {
+            if (e instanceof UnauthorizedException) {
+                await handleUnauthorized();
+            } else {
+                createNotification("Error checking access!", "We currently cant check if you are logged in. Please try again later!")
+            }
             return false;
         }
-
-        if (response.ok) {
-            const timestamp = addHours(1);
-            await chrome.storage.local.set({AuthTimeStamp: timestamp})
-        }
-        return response.ok;
     } else {
         return true;
     }
@@ -60,7 +54,7 @@ export async function checkIfAuthenticated() {
 async function checkIfAuthCheckIsNeeded() {
     const currentTime = Date.now();
     const timestamp = await chrome.storage.local.get("AuthTimeStamp") as
-        {AuthTimeStamp: number | undefined};
+        { AuthTimeStamp: number | undefined };
     if (timestamp.AuthTimeStamp === undefined) {
         return true;
     }

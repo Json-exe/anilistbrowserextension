@@ -1,10 +1,11 @@
-import {searchMedia} from './graphql/graphqlQuerys'
 import {getUserToken, handleUnauthorized} from "./anilistextensionhelpers";
 import {MessageData, RequestType, ResponseData, AnimeInfo} from "./Interfaces";
+import {execute, UnauthorizedException} from "./graphql/graphqlExecutor";
+import {SEARCH_MEDIA_QUERY} from "./graphql/graphqlQuerys";
 
 const url = "https://graphql.anilist.co";
 
-const connection = chrome.runtime.connect({ name: "popup" });
+const connection = chrome.runtime.connect({name: "popup"});
 
 async function checkAuth() {
     const message: MessageData = {Type: RequestType.Auth}
@@ -79,28 +80,13 @@ window.addEventListener("load", async () => {
 })
 
 async function searchForAnime(searchText: string) {
-    const options = {
-        method: "POST",
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'Authorization': 'Bearer ' + await getUserToken(),
-        },
-        body: JSON.stringify({
-            query: searchMedia,
-            variables: {
-                search: searchText
-            }
-        })
-    } as RequestInit;
-
-    const response = await fetch(url, options)
-    if (response.status === 400 || response.status === 401) {
-        await handleUnauthorized()
-        return;
-    } else if (!response.ok) {
-        return;
+    try {
+        const data = await execute(SEARCH_MEDIA_QUERY, {search: searchText}, {'Authorization': 'Bearer ' + await getUserToken()});
+        return data.Media;
+    } catch (e) {
+        if (e instanceof UnauthorizedException) {
+            await handleUnauthorized();
+        }
+        return null;
     }
-    const data = await response.json();
-    return data.data.Media;
 }
