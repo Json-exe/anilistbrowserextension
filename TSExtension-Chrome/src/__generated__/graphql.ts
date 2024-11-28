@@ -4687,6 +4687,14 @@ export type SearchMediaQueryVariables = Exact<{
 
 export type SearchMediaQuery = { __typename?: 'Query', Media?: { __typename?: 'Media', id: number, siteUrl?: string | null, title?: { __typename?: 'MediaTitle', romaji?: string | null, english?: string | null } | null, mediaListEntry?: { __typename?: 'MediaList', id: number, status?: MediaListStatus | null } | null } | null };
 
+export type SearchMediaContentQueryVariables = Exact<{
+  id?: InputMaybe<Scalars['Int']['input']>;
+  search?: InputMaybe<Scalars['String']['input']>;
+}>;
+
+
+export type SearchMediaContentQuery = { __typename?: 'Query', Media?: { __typename?: 'Media', id: number, siteUrl?: string | null, title?: { __typename?: 'MediaTitle', romaji?: string | null, english?: string | null } | null, mediaListEntry?: { __typename?: 'MediaList', id: number, status?: MediaListStatus | null } | null, coverImage?: { __typename?: 'MediaCoverImage', medium?: string | null } | null } | null };
+
 export type AddMediaToListMutationVariables = Exact<{
   mediaId?: InputMaybe<Scalars['Int']['input']>;
 }>;
@@ -4733,6 +4741,25 @@ export const SearchMediaDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<SearchMediaQuery, SearchMediaQueryVariables>;
+export const SearchMediaContentDocument = new TypedDocumentString(`
+    query SearchMediaContent($id: Int, $search: String) {
+  Media(id: $id, type: ANIME, search: $search) {
+    id
+    title {
+      romaji
+      english
+    }
+    mediaListEntry {
+      id
+      status
+    }
+    siteUrl
+    coverImage {
+      medium
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<SearchMediaContentQuery, SearchMediaContentQueryVariables>;
 export const AddMediaToListDocument = new TypedDocumentString(`
     mutation AddMediaToList($mediaId: Int) {
   SaveMediaListEntry(mediaId: $mediaId, status: PLANNING) {

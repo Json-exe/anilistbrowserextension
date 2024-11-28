@@ -1,11 +1,8 @@
 import {getUserToken, handleUnauthorized} from "./anilistextensionhelpers";
 import {MessageData, RequestType, ResponseData, AnimeInfo} from "./Interfaces";
 import {execute, UnauthorizedException} from "./graphql/graphqlExecutor";
-import {SEARCH_MEDIA_QUERY} from "./graphql/graphqlQuerys";
+import {SEARCH_MEDIA_CONTENT_QUERY, SEARCH_MEDIA_QUERY} from "./graphql/graphqlQuerys";
 
-const url = "https://graphql.anilist.co";
-
-const connection = chrome.runtime.connect({name: "popup"});
 
 async function checkAuth() {
     const message: MessageData = {Type: RequestType.Auth}
@@ -14,8 +11,7 @@ async function checkAuth() {
 }
 
 async function sendAnimeInfoToPopup(info: AnimeInfo) {
-    const message: MessageData = {Type: RequestType.AnimeInfo, Value: info}
-    connection.postMessage(message);
+    await chrome.storage.local.set({AnimeInfo: info});
 }
 
 const observerUrlChange = async () => {
@@ -35,12 +31,13 @@ const observerUrlChange = async () => {
 }
 
 async function getHeadingLineAndAddElementToIt() {
-    console.log("Getting element!")
+    console.log("Getting title element!")
     let result = document.getElementsByClassName("app-body-wrapper")[0].getElementsByClassName("body")[0].children[0];
     console.log(result);
     const title = result.children[0] as HTMLHeadingElement;
     console.log(title.innerText)
     const data = await searchForAnime(title.innerText);
+    await sendAnimeInfoToPopup(new AnimeInfo(data.id, data.title.english, data.siteUrl, data.mediaListEntry.status, data.coverImage.medium));
     const info = document.createElement("div");
     const link = document.createElement("a");
     info.className = "new-element-class";
@@ -51,7 +48,7 @@ async function getHeadingLineAndAddElementToIt() {
     link.style.fontWeight = "bold";
     link.style.textDecoration = "underline";
     if (data) {
-        const isOnList = data.mediaListEntry !== null;
+        const isOnList = data.mediaListEntry.status !== null;
         link.href = data.siteUrl ?? "";
         if (isOnList) {
             link.text = "Already On List!";
@@ -60,13 +57,13 @@ async function getHeadingLineAndAddElementToIt() {
             link.text = "Not on List!";
             info.style.borderColor = "red";
         }
-        info.appendChild(link);
-        result.appendChild(info);
     } else {
         link.href = `https://anilist.co/search/anime?search=${title.innerText}`;
         link.text = "Not found on AniList!"
         info.style.borderColor = "yellow";
     }
+    info.appendChild(link);
+    result.appendChild(info);
 }
 
 window.onload = observerUrlChange;
@@ -81,7 +78,7 @@ window.addEventListener("load", async () => {
 
 async function searchForAnime(searchText: string) {
     try {
-        const data = await execute(SEARCH_MEDIA_QUERY, {search: searchText}, {'Authorization': 'Bearer ' + await getUserToken()});
+        const data = await execute(SEARCH_MEDIA_CONTENT_QUERY, {search: searchText}, {'Authorization': 'Bearer ' + await getUserToken()});
         return data.Media;
     } catch (e) {
         if (e instanceof UnauthorizedException) {

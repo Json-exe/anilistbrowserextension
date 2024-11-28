@@ -26,6 +26,26 @@ export const SEARCH_MEDIA_QUERY = graphql(`
     }
 `)
 
+export const SEARCH_MEDIA_CONTENT_QUERY = graphql(`
+    query SearchMediaContent($id: Int, $search: String) {
+        Media (id: $id, type: ANIME, search: $search) {
+            id
+            title {
+                romaji
+                english
+            }
+            mediaListEntry {
+                id
+                status
+            },
+            siteUrl,
+            coverImage {
+                medium
+            }
+        }
+    }
+`)
+
 export const ADD_MEDIA_TO_LIST_MUTATION = graphql(`
     mutation AddMediaToList($mediaId: Int) {
         SaveMediaListEntry(mediaId: $mediaId, status: PLANNING) {

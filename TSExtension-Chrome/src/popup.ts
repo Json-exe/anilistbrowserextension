@@ -1,4 +1,4 @@
-import {AnimeInfo, RequestType, MessageData} from "./Interfaces";
+import {AnimeInfo} from "./Interfaces";
 
 document.addEventListener("DOMContentLoaded", async () => {
     const loginDiv = document.getElementById('login-div')!;
@@ -47,13 +47,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         notifyText.textContent = ""
     }
 
-    chrome.runtime.onConnect.addListener((port) => {
-        port.onMessage.addListener((message: MessageData) => {
-            if (message.Type === RequestType.AnimeInfo) {
-                console.log(message.Value);
-            }
-        });
-    });
+    const animeInfo = await chrome.storage.local.get("AnimeInfo") as { AnimeInfo: AnimeInfo | undefined };
+    if (animeInfo.AnimeInfo) {
+        getAndUpdateInfoElements(animeInfo.AnimeInfo);
+        showElementAndChildren(document.getElementById("anime-info"));
+    }
 });
 
 
@@ -69,4 +67,17 @@ function showElementAndChildren(element: HTMLElement) {
     for (let i = 0; i < element.children.length; i++) {
         (element.children[i] as HTMLElement).style.display = 'block';
     }
+}
+
+function getAndUpdateInfoElements(info: AnimeInfo) {
+    const titleElement = document.getElementById("anime-info-name")!;
+    const statusElement = document.getElementById("anime-info-status")!;
+    const imageElement = document.getElementById("anime-info-image")! as HTMLImageElement;
+    const linkElement = document.getElementById("anime-info-list-link")! as HTMLAnchorElement;
+    const noContentElement = document.getElementById("no-content");
+    noContentElement.style.display = "none";
+    titleElement.textContent = info.title;
+    statusElement.textContent = "Status: " + info.mediaListStatus;
+    linkElement.href = info.siteUrl;
+    imageElement.src = info.image ?? "https://anilist.co/img/icons/icon.svg";
 }

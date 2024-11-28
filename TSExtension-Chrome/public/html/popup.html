@@ -7,14 +7,11 @@
     <style>
         /* Add your CSS here */
         body {
-            width: 400px;
-            min-height: 200px;
+            width: 300px;
+            min-height: 400px;
             margin: 0;
             padding: 0;
             display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
         }
 
         .btn {
@@ -40,7 +37,7 @@
     </style>
 </head>
 <body>
-<div class="m-5">
+<div style="width: 100%">
     <div class="gap-3 mx-3 vstack d-flex" id="login-div" style="align-items: center; justify-content: center;">
         <div id="notify-container" style="width: 80%; padding: 5px; border: 1px solid red; border-radius: 50px;
             justify-content: center; align-items: center; background-color: rgba(255, 0, 0, 0.2)"
@@ -61,7 +58,7 @@
         <h5>3. Confirm</h5>
         <a class="btn btn-secondary action-elements" id="confirm-login">Confirm</a>
     </div>
-    <div id="main" class="vstack d-flex maincontent">
+    <div id="main" style="height: 100%" class="vstack d-flex maincontent">
         <div class="appbar">
             <label>Extension</label>
             <a id="logout" class="btn action-elements text-white border-white" style="max-width: 10px;">
@@ -69,24 +66,22 @@
             </a>
         </div>
         <div style="padding: 5px;">
-            <div id="nocontent" class="mt-3">
+            <div id="no-content" class="mt-3">
                 <label class="alert alert-info">
-                    No content detected. Please navigate to a Crunchyroll Page!
-                    Hello from new Build! 1.0.0
+                    No content detected. Please navigate to a Crunchyroll Series Page!
                 </label>
             </div>
             <div id="content">
-                <div id="anime-info" class="vstack d-flex">
-                    <img id="anime-info-image" alt="cover"
-                         src="https://anilist.co/img/icons/icon.svg"
-                         width="150px" height="150px"
-                         class="align-self-center"/>
+                <div id="anime-info" class="vstack d-flex" style="display: none;">
+                    <img id="anime-info-image" alt="anime cover"
+                         src="https://anilist.co/img/icons/icon.svg" height="200px"
+                         class="align-self-center object-fit-contain"/>
                     <label id="anime-info-name" class="align-self-center">Name:</label>
                     <label id="anime-info-status" class="mt-3">Status: On List</label>
                     <div class="mt-3">
                         <a id="anime-info-list-link" href="https://anilist.co/"
                            target="_blank">
-                            AniList Site
+                            AniList Series page
                         </a>
                     </div>
                 </div>

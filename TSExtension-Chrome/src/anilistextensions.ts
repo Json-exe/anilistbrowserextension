@@ -6,8 +6,6 @@ import {ADD_MEDIA_TO_LIST_MUTATION, GET_USER_QUERY, SEARCH_MEDIA_QUERY} from "./
 async function searchForAnime(selectionText: string | undefined) {
     try {
         const data = await execute(SEARCH_MEDIA_QUERY, {search: selectionText}, {'Authorization': 'Bearer ' + await getUserToken()});
-        console.log(data)
-        console.log(data.Media)
         return data.Media;
     } catch (e) {
         if (e instanceof UnauthorizedException) {

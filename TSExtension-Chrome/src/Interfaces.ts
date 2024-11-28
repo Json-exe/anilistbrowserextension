@@ -1,3 +1,5 @@
+import {MediaListStatus} from "./__generated__/graphql";
+
 export interface MessageData {
     Type: RequestType
     Value?: any
@@ -13,15 +15,17 @@ export interface ResponseData {
 }
 
 export class AnimeInfo {
-    id: string
+    id: number
     title: string
     siteUrl: string
-    mediaListEntry: any
+    mediaListStatus?: MediaListStatus
+    image?: string
 
-    constructor(id: string, title: string, siteUrl: string, mediaListEntry: any) {
+    constructor(id: number, title: string, siteUrl: string, mediaListStatus?: MediaListStatus, image?: string) {
         this.id = id;
         this.title = title;
         this.siteUrl = siteUrl;
-        this.mediaListEntry = mediaListEntry;
+        this.mediaListStatus = mediaListStatus;
+        this.image = image;
     }
 }
