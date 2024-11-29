@@ -45,9 +45,9 @@ async function searchAnimeAndCheckIfOnList(selectionText: string | undefined) {
         }
         const success = await addAnimeToList(media.id);
         if (success) {
-            createNotification("Anime added", "Anime was successfully added to your watchlist")
+            createNotification("Anime added", `${media.title.english} was successfully added to your watchlist`)
         } else {
-            createNotification("Anime not added", "Could not add anime to your watchlist")
+            createNotification("Anime not added", "Could not add anime to your watchlist. Please try again.")
         }
     } else {
         createNotification("Anime not found", "Could not find anime on AniList!")

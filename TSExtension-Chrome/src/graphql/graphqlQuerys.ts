@@ -40,7 +40,7 @@ export const SEARCH_MEDIA_CONTENT_QUERY = graphql(`
             },
             siteUrl,
             coverImage {
-                medium
+                large
             }
         }
     }

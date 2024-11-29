@@ -1,8 +1,9 @@
 import {getUserToken, handleUnauthorized} from "./anilistextensionhelpers";
 import {MessageData, RequestType, ResponseData, AnimeInfo} from "./Interfaces";
 import {execute, UnauthorizedException} from "./graphql/graphqlExecutor";
-import {SEARCH_MEDIA_CONTENT_QUERY, SEARCH_MEDIA_QUERY} from "./graphql/graphqlQuerys";
+import {SEARCH_MEDIA_CONTENT_QUERY} from "./graphql/graphqlQuerys";
 
+console.log("Content script running!");
 
 async function checkAuth() {
     const message: MessageData = {Type: RequestType.Auth}
@@ -10,7 +11,7 @@ async function checkAuth() {
     return response.success;
 }
 
-async function sendAnimeInfoToPopup(info: AnimeInfo) {
+async function sendAnimeInfoToPopup(info?: AnimeInfo) {
     await chrome.storage.local.set({AnimeInfo: info});
 }
 
@@ -31,13 +32,22 @@ const observerUrlChange = async () => {
 }
 
 async function getHeadingLineAndAddElementToIt() {
-    console.log("Getting title element!")
     let result = document.getElementsByClassName("app-body-wrapper")[0].getElementsByClassName("body")[0].children[0];
-    console.log(result);
     const title = result.children[0] as HTMLHeadingElement;
     console.log(title.innerText)
     const data = await searchForAnime(title.innerText);
-    await sendAnimeInfoToPopup(new AnimeInfo(data.id, data.title.english, data.siteUrl, data.mediaListEntry.status, data.coverImage.medium));
+    console.log(data)
+    if (!data) {
+        await sendAnimeInfoToPopup(null);
+        return;
+    }
+    await sendAnimeInfoToPopup(new AnimeInfo(
+        data.id,
+        data.title.english,
+        data.siteUrl,
+        data.mediaListEntry?.status ?? null,
+        data.coverImage.large
+    ));
     const info = document.createElement("div");
     const link = document.createElement("a");
     info.className = "new-element-class";
@@ -48,7 +58,7 @@ async function getHeadingLineAndAddElementToIt() {
     link.style.fontWeight = "bold";
     link.style.textDecoration = "underline";
     if (data) {
-        const isOnList = data.mediaListEntry.status !== null;
+        const isOnList = data.mediaListEntry !== null && data.mediaListEntry.status !== null;
         link.href = data.siteUrl ?? "";
         if (isOnList) {
             link.text = "Already On List!";

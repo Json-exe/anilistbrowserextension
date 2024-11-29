@@ -22,6 +22,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         await chrome.storage.local.remove("UserToken");
         await chrome.storage.local.remove("UserId");
         showElementAndChildren(loginDiv);
+        hideElementAndChildren(mainDiv)
         mainDiv.style.display = 'none';
     });
 
@@ -51,6 +52,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (animeInfo.AnimeInfo) {
         getAndUpdateInfoElements(animeInfo.AnimeInfo);
         showElementAndChildren(document.getElementById("anime-info"));
+    } else {
+        hideElementAndChildren(document.getElementById("anime-info"));
+        const noContentElement = document.getElementById("no-content");
+        noContentElement.style.display = "block";
     }
 });
 
@@ -77,7 +82,7 @@ function getAndUpdateInfoElements(info: AnimeInfo) {
     const noContentElement = document.getElementById("no-content");
     noContentElement.style.display = "none";
     titleElement.textContent = info.title;
-    statusElement.textContent = "Status: " + info.mediaListStatus;
+    statusElement.textContent = "Status: " + (info.mediaListStatus ?? "Not on list");
     linkElement.href = info.siteUrl;
     imageElement.src = info.image ?? "https://anilist.co/img/icons/icon.svg";
 }

@@ -4693,7 +4693,7 @@ export type SearchMediaContentQueryVariables = Exact<{
 }>;
 
 
-export type SearchMediaContentQuery = { __typename?: 'Query', Media?: { __typename?: 'Media', id: number, siteUrl?: string | null, title?: { __typename?: 'MediaTitle', romaji?: string | null, english?: string | null } | null, mediaListEntry?: { __typename?: 'MediaList', id: number, status?: MediaListStatus | null } | null, coverImage?: { __typename?: 'MediaCoverImage', medium?: string | null } | null } | null };
+export type SearchMediaContentQuery = { __typename?: 'Query', Media?: { __typename?: 'Media', id: number, siteUrl?: string | null, title?: { __typename?: 'MediaTitle', romaji?: string | null, english?: string | null } | null, mediaListEntry?: { __typename?: 'MediaList', id: number, status?: MediaListStatus | null } | null, coverImage?: { __typename?: 'MediaCoverImage', large?: string | null } | null } | null };
 
 export type AddMediaToListMutationVariables = Exact<{
   mediaId?: InputMaybe<Scalars['Int']['input']>;
@@ -4755,7 +4755,7 @@ export const SearchMediaContentDocument = new TypedDocumentString(`
     }
     siteUrl
     coverImage {
-      medium
+      large
     }
   }
 }

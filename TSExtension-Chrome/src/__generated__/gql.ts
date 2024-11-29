@@ -17,7 +17,7 @@ import * as types from './graphql';
 const documents = {
     "\n    query GetUser{\n        Viewer {\n            id\n            name\n        }\n    }\n": types.GetUserDocument,
     "\n    query SearchMedia($id: Int, $search: String) { # Define which variables will be used in the query (id)\n        Media (id: $id, type: ANIME, search: $search) { # Insert our variables into the query arguments (id) (type: ANIME is hard-coded in the query)\n            id\n            title {\n                romaji\n                english\n            }\n            mediaListEntry {\n                id\n                status\n            },\n            siteUrl\n        }\n    }\n": types.SearchMediaDocument,
-    "\n    query SearchMediaContent($id: Int, $search: String) {\n        Media (id: $id, type: ANIME, search: $search) {\n            id\n            title {\n                romaji\n                english\n            }\n            mediaListEntry {\n                id\n                status\n            },\n            siteUrl,\n            coverImage {\n                medium\n            }\n        }\n    }\n": types.SearchMediaContentDocument,
+    "\n    query SearchMediaContent($id: Int, $search: String) {\n        Media (id: $id, type: ANIME, search: $search) {\n            id\n            title {\n                romaji\n                english\n            }\n            mediaListEntry {\n                id\n                status\n            },\n            siteUrl,\n            coverImage {\n                large\n            }\n        }\n    }\n": types.SearchMediaContentDocument,
     "\n    mutation AddMediaToList($mediaId: Int) {\n        SaveMediaListEntry(mediaId: $mediaId, status: PLANNING) {\n            id\n            status\n        }\n    }\n": types.AddMediaToListDocument,
 };
 
@@ -32,7 +32,7 @@ export function graphql(source: "\n    query SearchMedia($id: Int, $search: Stri
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n    query SearchMediaContent($id: Int, $search: String) {\n        Media (id: $id, type: ANIME, search: $search) {\n            id\n            title {\n                romaji\n                english\n            }\n            mediaListEntry {\n                id\n                status\n            },\n            siteUrl,\n            coverImage {\n                medium\n            }\n        }\n    }\n"): typeof import('./graphql').SearchMediaContentDocument;
+export function graphql(source: "\n    query SearchMediaContent($id: Int, $search: String) {\n        Media (id: $id, type: ANIME, search: $search) {\n            id\n            title {\n                romaji\n                english\n            }\n            mediaListEntry {\n                id\n                status\n            },\n            siteUrl,\n            coverImage {\n                large\n            }\n        }\n    }\n"): typeof import('./graphql').SearchMediaContentDocument;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
