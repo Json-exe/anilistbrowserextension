@@ -40,17 +40,17 @@ async function searchAnimeAndCheckIfOnList(selectionText: string | undefined) {
     if (media) {
         const isOnList = media.mediaListEntry !== null;
         if (isOnList) {
-            createNotification("Anime already on list", "Anime is already on your watchlist");
+            createNotification("Already on list", `${media.title.english} is already on your watchlist`);
             return;
         }
         const success = await addAnimeToList(media.id);
         if (success) {
-            createNotification("Anime added", `${media.title.english} was successfully added to your watchlist`)
+            createNotification("Added!", `${media.title.english} was successfully added to your watchlist`)
         } else {
-            createNotification("Anime not added", "Could not add anime to your watchlist. Please try again.")
+            createNotification("Not added", `Could not add ${media.title.english} to your watchlist. Please try again.`)
         }
     } else {
-        createNotification("Anime not found", "Could not find anime on AniList!")
+        createNotification("Not found", `Could not find ${selectionText} on AniList!`)
     }
 }
 

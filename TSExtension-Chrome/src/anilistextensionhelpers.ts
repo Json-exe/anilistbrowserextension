@@ -34,6 +34,7 @@ export async function checkIfAuthenticated() {
             if (data.Viewer.id !== undefined) {
                 const timestamp = addHours(1);
                 await chrome.storage.local.set({AuthTimeStamp: timestamp})
+                return true;
             } else {
                 await handleUnauthorized();
                 return false;
@@ -55,6 +56,7 @@ async function checkIfAuthCheckIsNeeded() {
     const currentTime = Date.now();
     const timestamp = await chrome.storage.local.get("AuthTimeStamp") as
         { AuthTimeStamp: number | undefined };
+    console.log(`Auth-Timestamp: ${timestamp}`)
     if (timestamp.AuthTimeStamp === undefined) {
         return true;
     }
