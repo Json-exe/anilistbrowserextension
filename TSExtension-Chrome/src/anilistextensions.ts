@@ -40,7 +40,7 @@ async function searchAnimeAndCheckIfOnList(selectionText: string | undefined) {
     if (media) {
         const isOnList = media.mediaListEntry !== null;
         if (isOnList) {
-            createNotification("Already on list", `${media.title.english} is already on your watchlist`);
+            createNotification("Already on list", `${media.title.english ?? media.title.romaji} is already on your watchlist`);
             return;
         }
         const success = await addAnimeToList(media.id);
