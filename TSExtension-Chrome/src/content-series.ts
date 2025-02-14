@@ -33,7 +33,8 @@ const observerUrlChange = async () => {
 
 async function getHeadingLineAndAddElementToIt() {
     await new Promise(resolve => setTimeout(resolve, 100));
-    let result = document.evaluate("//div[@data-t='series-hero-body']//h1[contains(@class, 'hero-body__seo-title')]", document.body, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
+    const seriesHeroBody = document.evaluate("//div[@data-t='series-hero-body']", document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+    const result = document.evaluate("//h1[contains(@class, 'hero-body__seo-title')]", seriesHeroBody, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
     const title = result.singleNodeValue as HTMLHeadingElement;
     console.log(title.innerText)
     const data = await searchForAnime(title.innerText);
@@ -74,6 +75,7 @@ async function getHeadingLineAndAddElementToIt() {
         info.style.borderColor = "yellow";
     }
     info.appendChild(link);
+    seriesHeroBody.appendChild(info);
 }
 
 window.onload = observerUrlChange;
