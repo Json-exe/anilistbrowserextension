@@ -32,8 +32,9 @@ const observerUrlChange = async () => {
 }
 
 async function getHeadingLineAndAddElementToIt() {
-    let result = document.getElementsByClassName("app-body-wrapper")[0].getElementsByClassName("body")[0].children[0];
-    const title = result.children[0] as HTMLHeadingElement;
+    await new Promise(resolve => setTimeout(resolve, 100));
+    let result = document.evaluate("//div[@data-t='series-hero-body']//h1[contains(@class, 'hero-body__seo-title')]", document.body, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
+    const title = result.singleNodeValue as HTMLHeadingElement;
     console.log(title.innerText)
     const data = await searchForAnime(title.innerText);
     console.log(data)
@@ -73,7 +74,6 @@ async function getHeadingLineAndAddElementToIt() {
         info.style.borderColor = "yellow";
     }
     info.appendChild(link);
-    result.appendChild(info);
 }
 
 window.onload = observerUrlChange;
