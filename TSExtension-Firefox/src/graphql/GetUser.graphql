@@ -1,6 +1,0 @@
-query {
-    Viewer {
-        id
-        name
-    }
-}

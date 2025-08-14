@@ -1,6 +1,0 @@
-mutation ($mediaId: Int) {
-    SaveMediaListEntry(mediaId: $mediaId, status: PLANNING) {
-        id
-        status
-    }
-}
