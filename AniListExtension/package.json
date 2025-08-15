@@ -2,7 +2,7 @@
   "name": "wxt-svelte-starter",
   "description": "manifest.json description",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "wxt",
@@ -26,6 +26,7 @@
   },
   "dependencies": {
     "@graphql-codegen/cli": "^5.0.7",
+    "@wxt-dev/auto-icons": "^1.1.0",
     "bootstrap": "^5.3.7"
   }
 }

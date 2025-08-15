@@ -13,7 +13,7 @@ export function createNotification(title: string, message: string) {
     }
     browser.notifications.create({
         type: "basic",
-        iconUrl: browser.runtime.getURL("/icon/48.png"),
+        iconUrl: browser.runtime.getURL("/icon.png"),
         title: title,
         message: message
     })

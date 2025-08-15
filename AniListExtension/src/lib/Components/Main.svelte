@@ -1,6 +1,6 @@
 ﻿<div style="height: 100%" class="vstack d-flex maincontent">
     <div class="appbar">
-        <p>Companion</p>
+        <p class="m-0">Companion</p>
         <button class="btn action-elements text-white border-white" style="max-width: 10px;" onclick={logout}>
             Log-Out
         </button>

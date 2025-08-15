@@ -57,7 +57,7 @@ async function getHeadingLineAndAddElementToIt() {
     let loadingDiv = document.evaluate("//div[contains(concat(' ', @class, ' '), ' loading-')]", document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
     while (loadingDiv) {
         await new Promise(resolve => setTimeout(resolve, 1000));
-        loadingDiv = document.evaluate("//div[contains(concat(' ', @class, ' '), ' loading-')", document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+        loadingDiv = document.evaluate("//div[contains(concat(' ', @class, ' '), ' loading-')]", document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
     }
     const seriesHeroBody = document.evaluate("//div[@data-t='series-hero-body']", document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
     if (!seriesHeroBody) return;
