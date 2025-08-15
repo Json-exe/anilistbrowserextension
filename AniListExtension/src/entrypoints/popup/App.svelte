@@ -18,7 +18,7 @@
     checkIfAuthenticated().then();
 </script>
 
-<main>
+<main class="h-100">
     {#if loading}
         Loading...
     {:else}

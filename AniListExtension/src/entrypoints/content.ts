@@ -1,6 +1,6 @@
 import {defineContentScript} from "wxt/utils/define-content-script";
-import {getUserToken, handleUnauthorized} from "@/lib/helper";
-import {AnimeInfo, MessageData, RequestType, ResponseData} from "@/lib/interfaces";
+import {checkIfAuthenticated, getUserToken, handleUnauthorized} from "@/lib/helper";
+import {AnimeInfo} from "@/lib/interfaces";
 import {execute, UnauthorizedException} from "@/graphql/executor";
 import {SEARCH_MEDIA_CONTENT_QUERY} from "@/graphql/queries";
 import {ContentScriptContext} from "wxt/utils/content-script-context";
@@ -17,9 +17,11 @@ export default defineContentScript({
 
 function init(ctx: ContentScriptContext) {
     window.onload = async () => {
-        if (!await checkAuth()) {
+        console.log("window loaded")
+        if (!await checkIfAuthenticated()) {
             return;
         }
+        console.log("auth checked")
         let old = document.location.href;
         const observer = new MutationObserver(mutations => {
             if (old !== document.location.href) {
@@ -29,6 +31,7 @@ function init(ctx: ContentScriptContext) {
                 }
             }
         })
+        console.log("observer created")
         observer.observe(document.body, {childList: true, subtree: true})
         ctx.onInvalidated(() => {
             observer.disconnect();
@@ -36,7 +39,7 @@ function init(ctx: ContentScriptContext) {
     };
 
     window.addEventListener("load", async () => {
-        if (!await checkAuth()) {
+        if (!await checkIfAuthenticated()) {
             return;
         }
         if (document.location.href.includes("series")) {
@@ -45,21 +48,23 @@ function init(ctx: ContentScriptContext) {
     });
 }
 
-async function checkAuth() {
-    const message: MessageData = {Type: RequestType.Auth}
-    const response = await browser.runtime.sendMessage(message) as ResponseData;
-    return response.success;
-}
-
 async function sendAnimeInfoToPopup(info?: AnimeInfo) {
     await browser.storage.local.set({AnimeInfo: info});
 }
 
 async function getHeadingLineAndAddElementToIt() {
     await new Promise(resolve => setTimeout(resolve, 100));
+    let loadingDiv = document.evaluate("//div[contains(concat(' ', @class, ' '), ' loading-')]", document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+    while (loadingDiv) {
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        loadingDiv = document.evaluate("//div[contains(concat(' ', @class, ' '), ' loading-')", document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+    }
     const seriesHeroBody = document.evaluate("//div[@data-t='series-hero-body']", document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
     if (!seriesHeroBody) return;
-    const result = document.evaluate("//h1[contains(@class, 'hero-body__seo-title')]", seriesHeroBody, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
+    let result = document.evaluate("//h1[contains(@class, 'hero-body__seo-title')]", seriesHeroBody, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
+    if (!result.singleNodeValue) {
+        result = document.evaluate("//h1[contains(concat(' ', @class, ' '), ' heading-') or contains(concat(' ', @class, ' '), ' heading--')]", seriesHeroBody, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
+    }
     const title = result.singleNodeValue as HTMLHeadingElement;
     console.log(title.innerText)
     const data = await searchForAnime(title.innerText);
@@ -72,11 +77,17 @@ async function getHeadingLineAndAddElementToIt() {
         data.id,
         data.title?.english ?? data.title?.romaji ?? title.innerText,
         data.siteUrl ?? '',
-        data.mediaListEntry?.status ?? null,
-        data.coverImage?.large ?? ''
+        data.mediaListEntry?.status ?? undefined,
+        data.coverImage?.large ?? undefined
     ));
     const info = document.createElement("div");
     const link = document.createElement("a");
+    const elementId = "anilist-extenssion-info-element"
+    if (document.getElementById(elementId)) {
+        document.getElementById(elementId)?.remove();
+    }
+
+    info.id = elementId;
     info.className = "new-element-class";
     info.style.border = "1px solid blue";
     info.style.borderRadius = "24px";

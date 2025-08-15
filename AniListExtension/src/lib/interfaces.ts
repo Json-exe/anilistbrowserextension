@@ -1,19 +1,5 @@
 import {MediaListStatus} from "@/__generated__/graphql";
 
-export interface MessageData {
-    Type: RequestType
-    Value?: any
-}
-
-export enum RequestType {
-    Auth,
-    AnimeInfo
-}
-
-export interface ResponseData {
-    success: boolean
-}
-
 export class AnimeInfo {
     id: number
     title: string
