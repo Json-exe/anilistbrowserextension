@@ -18,10 +18,10 @@ export class AnimeInfo {
     id: number
     title: string
     siteUrl: string
-    mediaListStatus?: MediaListStatus | null
+    mediaListStatus?: MediaListStatus
     image?: string
 
-    constructor(id: number, title: string, siteUrl: string, mediaListStatus?: MediaListStatus | null, image?: string) {
+    constructor(id: number, title: string, siteUrl: string, mediaListStatus?: MediaListStatus, image?: string) {
         this.id = id;
         this.title = title;
         this.siteUrl = siteUrl;

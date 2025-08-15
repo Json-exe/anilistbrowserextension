@@ -1,5 +1,0 @@
-schema: schema.graphql
-documents: '**/*.graphql'
-extensions:
-  endpoints:
-    default: https://graphql.anilist.co

@@ -24,11 +24,11 @@ export async function getUserToken() {
     return token["UserToken"];
 }
 
-export async function checkIfAuthenticated() {
+export async function checkIfAuthenticated(forceCheck: boolean = false) {
     if (await getUserToken() === undefined) {
         createNotification("Not logged in", "Please log in to AniList first via the extension popup!")
         return false;
-    } else if (await checkIfAuthCheckIsNeeded()) {
+    } else if (forceCheck || await checkIfAuthCheckIsNeeded()) {
         try {
             const data = await execute(GET_USER_QUERY, {}, {'Authorization': 'Bearer ' + await getUserToken()});
             if (data.Viewer?.id !== undefined) {

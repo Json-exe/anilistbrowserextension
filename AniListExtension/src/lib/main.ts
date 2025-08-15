@@ -54,7 +54,7 @@ export async function searchAnimeAndCheckIfOnList(selectionText: string | undefi
 }
 
 async function getCurrentUser() {
-    const userId = await browser.storage.local.get("UserId") as { UserId: string | undefined };
+    const userId = await browser.storage.local.get("UserId");
     if (userId.UserId !== undefined) {
         return true;
     }
