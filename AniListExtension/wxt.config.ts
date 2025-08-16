@@ -9,9 +9,9 @@ export default defineConfig({
             'storage',
             "contextMenus",
             "notifications",
-            "scripting",
             "webNavigation"
         ],
         name: "AniList Crunchyroll Companion",
+        description: ""
     }
 });
