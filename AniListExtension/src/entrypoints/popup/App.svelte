@@ -20,7 +20,10 @@
 
 <main class="h-100">
     {#if loading}
-        Loading...
+        <div class="loading">
+            <div class="spinner"></div>
+            <p class="text-muted">Wird geladen...</p>
+        </div>
     {:else}
         {#if authenticated}
             <Main refresh={checkIfAuthenticated}/>
