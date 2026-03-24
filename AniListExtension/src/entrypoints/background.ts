@@ -1,8 +1,11 @@
 import {searchAnimeAndCheckIfOnList} from "@/lib/main";
 import {defineBackground} from "wxt/utils/define-background";
+import {initNotificationActionExecutor} from "@/proxies/message-executor";
+
 
 export default defineBackground(() => {
     console.log('Hello background!', {id: browser.runtime.id});
+    initNotificationActionExecutor();
 
     browser.runtime.onInstalled.addListener(function () {
         browser.contextMenus.create({
@@ -12,7 +15,7 @@ export default defineBackground(() => {
             documentUrlPatterns: ["*://*.crunchyroll.com/*"],
             contexts: ["selection"],
         })
-    })
+    });
 
     browser.contextMenus.onClicked.addListener(async function (info) {
         switch (info.menuItemId) {
@@ -20,5 +23,6 @@ export default defineBackground(() => {
                 await searchAnimeAndCheckIfOnList(info.selectionText);
                 break;
         }
-    })
+    });
+
 });

@@ -1,6 +1,7 @@
 import {checkIfAuthenticated, createNotification, getUserToken, handleUnauthorized} from "./helper";
 import {execute, UnauthorizedException} from "@/graphql/executor";
 import {ADD_MEDIA_TO_LIST_MUTATION, GET_USER_QUERY, SEARCH_MEDIA_QUERY} from "@/graphql/queries";
+import {createOpenUrlNotificationAction} from "@/proxies/message-executor";
 
 async function searchForAnime(selectionText: string | undefined) {
     try {
@@ -38,18 +39,20 @@ export async function searchAnimeAndCheckIfOnList(selectionText: string | undefi
     const media = await searchForAnime(selectionText);
     if (media) {
         const isOnList = media.mediaListEntry !== null;
+        const action = createOpenUrlNotificationAction(media.siteUrl ?? `https://anilist.co/anime/${media.id}`);
         if (isOnList) {
-            createNotification("Already on list", `${media.title?.english ?? media.title?.romaji ?? selectionText} is already on your watchlist`);
+            await createNotification("Already on list", `${media.title?.english ?? media.title?.romaji ?? selectionText} is already on your watchlist`, action);
             return;
         }
         const success = await addAnimeToList(media.id);
         if (success) {
-            createNotification("Added!", `${media.title?.english ?? media.title?.romaji ?? selectionText} was successfully added to your watchlist`)
+            await createNotification("Added!", `${media.title?.english ?? media.title?.romaji ?? selectionText} was successfully added to your watchlist`, action);
         } else {
-            createNotification("Not added", `Could not add ${media.title?.english ?? media.title?.romaji ?? selectionText} to your watchlist. Please try again.`)
+            await createNotification("Not added", `Could not add ${media.title?.english ?? media.title?.romaji ?? selectionText} to your watchlist. Please try again.`, action);
         }
     } else {
-        createNotification("Not found", `Could not find ${selectionText} on AniList!`)
+        const action = createOpenUrlNotificationAction(`https://anilist.co/search/anime?search=${selectionText}`);
+        await createNotification("Not found", `Could not find ${selectionText} on AniList!`, action);
     }
 }
 
@@ -68,7 +71,7 @@ async function getCurrentUser() {
         if (e instanceof UnauthorizedException) {
             await handleUnauthorized();
         } else {
-            createNotification("Error", "Could not fetch user from AniList!")
+            await createNotification("Error", "Could not fetch user from AniList!")
         }
         return false;
     }

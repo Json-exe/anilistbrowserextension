@@ -1,22 +1,28 @@
 import {execute, UnauthorizedException} from "@/graphql/executor";
 import {GET_USER_QUERY} from "@/graphql/queries";
+import {NotificationActionDto, registerNotificationAction} from "@/proxies/message-executor";
 
 export async function handleUnauthorized() {
     await browser.storage.local.remove("UserToken");
     await browser.storage.local.remove("UserId");
-    createNotification("AniList Extension", "You are not logged in. Please log in to AniList to use this extension.");
+    await createNotification("AniList Extension", "You are not logged in. Please log in to AniList to use this extension.");
 }
 
-export function createNotification(title: string, message: string) {
+export async function createNotification(title: string, message: string, action: NotificationActionDto | undefined = undefined) {
     if (browser.notifications === undefined) {
         return;
     }
-    browser.notifications.create({
+
+    const generatedNotificationId = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+    if (action) {
+        registerNotificationAction(generatedNotificationId, action);
+    }
+    await browser.notifications.create(generatedNotificationId, {
         type: "basic",
         iconUrl: browser.runtime.getURL("/icon.png"),
         title: title,
         message: message
-    })
+    });
 }
 
 export async function getUserToken() {
@@ -26,7 +32,7 @@ export async function getUserToken() {
 
 export async function checkIfAuthenticated(forceCheck: boolean = false) {
     if (await getUserToken() === undefined) {
-        createNotification("Not logged in", "Please log in to AniList first via the extension popup!")
+        await createNotification("Not logged in", "Please log in to AniList first via the extension popup!")
         return false;
     } else if (forceCheck || await checkIfAuthCheckIsNeeded()) {
         try {
@@ -43,7 +49,7 @@ export async function checkIfAuthenticated(forceCheck: boolean = false) {
             if (e instanceof UnauthorizedException) {
                 await handleUnauthorized();
             } else {
-                createNotification("Error checking access!", "We currently cant check if you are logged in. Please try again later!")
+                await createNotification("Error checking access!", "We currently cant check if you are logged in. Please try again later!")
             }
             return false;
         }
